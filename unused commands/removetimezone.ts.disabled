@@ -1,0 +1,38 @@
+import { CommandInteraction, CommandInteractionOptionResolver, CacheType } from "discord.js"
+import { TimezoneGuild } from "../interfaces"
+
+export = {
+    name: "removetimezone",
+    desc: "Deletes the specified timezone",
+    arguements: [
+        {   
+            name: 'timezone',
+            description: "The timezone you want to delete.",
+            required: true,
+            type: "MENTIONABLE"
+        }
+    ],
+    async execute(interaction: CommandInteraction, args: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>, guilds: TimezoneGuild[]){
+        const role: any = args.getMentionable("timezone", true)
+
+        const TimezoneGuild = interaction.guild
+        const roleManager = TimezoneGuild.roles
+
+        let timezones = guilds.find(g => g.id == TimezoneGuild.id).timezones
+        let timezone = timezones.find(t => t.roleId == role.id)
+
+        if(!timezone){
+            interaction.reply(":x: Query isn't a timezone role.")
+            return
+        }
+
+        const index = timezones.indexOf(timezone)
+        timezones.splice(index, 1)
+
+        roleManager.delete(role.id)
+
+        interaction.reply(":white_check_mark: Timezone removed.")
+
+        require("fs").writeFile("./data/timezones.json", JSON.stringify(guilds), () => {})
+    }
+}

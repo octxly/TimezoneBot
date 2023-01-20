@@ -1,0 +1,61 @@
+import { SlashCommandBuilder } from "@discordjs/builders"
+import { CommandInteraction, CommandInteractionOptionResolver, CacheType } from "discord.js"
+import { TimezoneGuild } from "../interfaces"
+
+// name: "createtimezone",
+//     desc: "Creates timezone role. (Meant for compatability with reaction role bots.)",
+//     arguements: [
+//         {   
+//             name: 'offset',
+//             description: "The UTC offset of the timezone in hours.",
+//             required: true,
+//             type: "NUMBER",
+//             minValue: -12,
+//             maxValue: 14
+//         }
+//     ],
+
+export = {
+    data: new SlashCommandBuilder()
+        .setName("createtimezone")
+        .setDescription("Creates timezone role. (Meant for compatability with reaction role bots.)"),
+    async execute(interaction: CommandInteraction, args: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>, guilds: TimezoneGuild[]){
+        const offset = args.getNumber("offset", true)
+        const formattedOffset = `UTC${offset >= 0 ? "+" : ""}${offset}`
+
+        const TimezoneGuild = interaction.guild
+        const roleManager = TimezoneGuild.roles
+
+        if(!guilds.find(g => g.id === TimezoneGuild.id)){
+            guilds.push(
+                {
+                    id: TimezoneGuild.id,
+                    timezones: []
+                }
+            )
+        }
+        //json object
+        const guild = guilds.find(g => g.id == TimezoneGuild.id)
+
+        if(guild.timezones.find(timezone => timezone.offset == offset)){
+            interaction.reply(":x: Timezone already created.")
+            return
+        }
+
+        let role = await roleManager.create({
+            name: formattedOffset,
+            color: "WHITE"
+        })
+
+        guild.timezones.push({
+            offset:  offset,
+            roleId: role.id,
+            time: "0",
+            users: []
+        })
+
+        interaction.reply(":white_check_mark: Timezone created.")
+
+        require("fs").writeFile("./data/timezones.json", JSON.stringify(guilds), () => {})
+    }
+}

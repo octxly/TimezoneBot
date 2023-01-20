@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "watch": true,
+        "resolveJsonModule": true,
+        "module": "CommonJS",
+        "esModuleInterop": true,
+        "outDir": "./build"
+    }
+}

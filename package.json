@@ -1,0 +1,21 @@
+{
+  "name": "timezonebot",
+  "version": "1.0.0",
+  "description": "Time zone bot",
+  "main": "./build/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ignore": "nodemon --ignore ./data/timezones.json"
+  },
+  "author": "octxly",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/builders": "^0.12.0",
+    "discord.js": "^13.6.0",
+    "mongodb": "^4.6.0",
+    "mongoose": "^6.3.4",
+    "node.js": "0.0.1-security",
+    "nodemon": "^2.0.15",
+    "typescript": "^4.6.2"
+  }
+}
